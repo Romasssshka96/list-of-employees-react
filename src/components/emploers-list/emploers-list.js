@@ -1,18 +1,21 @@
 import EmploersListItem from '../emploers-list-item/emploers-list-item'
 import './emploers-list.css'
 
-const EmploersList = ({data, onDelete})=>{
+const EmploersList = ({data, onDelete, onToggleIncrease, onToggleLike})=>{
     let elements = data.map(item => {
         const {id, ...enotherProps} = item //мы деструктурируем id а все остальное оставляем типо не тронутым и 
                                             // аргументы можно пачкой дальше передать 
-                                            
+                                       
         return(
             <EmploersListItem 
             key={id} 
             {...enotherProps}
             onDelete = { () =>{onDelete(id)}}
-            />//вот для єтого нам надо было пачку остальную оставить не тронутой 
+            //вот для єтого нам надо было пачку остальную оставить не тронутой 
             //<EmploersListItem name={item.name} salary={item.salary} increase={item.increase}/>
+            onToggleIncrease={()=> onToggleIncrease(id)}
+            onToggleLike={()=> onToggleLike(id)}
+            />
         )
         
     });

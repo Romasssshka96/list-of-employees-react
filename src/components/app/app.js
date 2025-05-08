@@ -16,8 +16,9 @@ constructor (props){
     {name: 'Jo', salary: 800, increase: true, like: true, id: 1},
     {name: 'Silvestr', salary: 1000, increase: false, like: false, id: 2},
     {name: 'Albert', salary: 1200, increase: false, like: false, id: 3},
-    ]
-
+    ],
+    term: '',
+    filter: 'all',
     }
 }
 
@@ -42,12 +43,12 @@ constructor (props){
             salary, 
             increase: false, 
             like: false, 
-            id: (7 + Math.random() * (4 + 1 - 3)),
+            id: (7 + Math.random() * (Math.random() + 1 - Math.random())),
         }
 
         this.setState(({data})=>{       //записіваем то какие мі данные меняем в итоге 
             const newArray = [...data, newItem]
-
+            
             return {
                data: newArray
             }
@@ -55,21 +56,123 @@ constructor (props){
         })
     }
 
+    onToggleIncrease = (id) => {
+        //this.setState(({data})=>{
+        //    const index = data.findIndex(elem => elem.id === id)
+//
+        //    const old = data[index]
+        //    const newItem = {...old, increase: !old.increase}
+        //    const newArray = [...data.slice(0, index), newItem, ...data.slice(index+1)]
+//
+        //    return {
+        //        data: newArray
+        //    }
+        //})
+        console.log(id)
+        this.setState(({data}) => ({
+            data: data.map(item => {
+                if(item.id === id){
+                    return{...item, increase: !item.increase}
+                }
+                return item
+            })
+        }))
+
+
+    }
+
+
+
+    onToggleLike = (id) => {
+        console.log(id)
+        this.setState(({data}) =>({
+            data: data.map(item => {
+                if(item.id === id){
+                    return{...item, like: !item.like}
+                }
+                return item
+            })
+      
+
+        }))
+    }
+
+
+
+
+    onUpdateSearch =(term)=>{
+        this.setState({term})
+    }
+
+    searchEploes = (items,term)=>{
+        if(term.length === 0){
+            return items
+        }
+        return items.filter(item =>{
+            return item.name.indexOf(term) > -1
+        })
+    }
+
+
+
+
+
+
+    filterEmp = (items, filter) => {
+        if(filter === 'like'){
+            return items.filter(item => item.like)
+        }if(filter === 'salary'){
+            return items.filter(item => item.salary > 1000)
+        }else{
+            return items
+        }
+    }
+
+    onUpdateList = (filter) => {
+        this.setState({filter})
+    }
+
+
+
+
+
     render(){
+
+        const {data, term, filter} = this.state
+
+        const listOfEmploes = this.filterEmp(this.searchEploes(data, term), filter)
+
+        const emploes = this.state.data.length
+        
+        const increasedEmploes = this.state.data.filter(item => item.increase).length
+
+         
         
     return (
         <div className="app">
-            <AppInfo/>
-            <div className="search-penal">
-                <SearchPenal/>
-                <AppFilter/>
-            </div>
-            <EmploersList 
-            data={this.state.data}
-            onDelete={this.deleteItem}
+            <AppInfo
+            emploes={emploes}
+            increasedEmploes={increasedEmploes}
             />
+            <div className="search-penal">
+                <SearchPenal
+                onUpdateSearch={this.onUpdateSearch}
+                />
+                <AppFilter
+                filter={filter}
+                onUpdateList={this.onUpdateList}
+                />
+            </div>
+
+            <EmploersList 
+            data={listOfEmploes}
+            onDelete={this.deleteItem}
+            onToggleIncrease={this.onToggleIncrease}
+            onToggleLike={this.onToggleLike}
+            />
+
             <EmploersAddForm
-            data={this.state.data}
+            data={data}
             addItem = {this.addItem}
             />
         </div>

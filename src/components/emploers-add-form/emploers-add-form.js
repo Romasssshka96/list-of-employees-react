@@ -32,6 +32,8 @@ class EmploersAddForm extends Component {
     
 
     render(){
+
+
                 return (
             <div className="app-add-form">
                 <h3>Добавьте нового сотрудника</h3>
